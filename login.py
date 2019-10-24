@@ -1,11 +1,17 @@
 #!/usr/bin/env python3
 import hashlib
 import getpass
-import os
+import os, sys, time 
+import daemon, threading
+import subprocess
+#from mqtt import listen
 
 #simple login system
 
 def login():
+    if not os.path.exists("./users/"):
+        os.mkdir("./users/")
+        register()
     #prompt user for credentials
     uname  = input("Enter your username: ")
     #get hashed password from user
@@ -38,7 +44,21 @@ def register():
     f.write(passwh)
     
     return
-    
-    
-register()
-login()
+
+def help_func():
+    print("'add' -> Add a new contact\n'list' -> List all online contacts\n'send' -> Transfer file to contact\n'exit' -> Exit SecureDrop")
+    return
+
+def exit_func():
+    sys.exit(0)
+
+#test ping function
+def tping(hostname):
+    #if = open("./tstout.txt")
+    response = os.system("ping -c 1 " + hostname)
+    if response == 0:
+        print("Host up")
+        return 0
+    else:
+        print("Host down")
+        return 1
