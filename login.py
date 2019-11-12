@@ -2,12 +2,9 @@
 import hashlib
 import getpass
 import os, sys, time 
-import daemon, threading
-import subprocess
-#from mqtt import listen
 
-#simple login system
 
+# Function for logging into the system.  Called first thing when securedrop.py is executed
 def login():
     if not os.path.exists("./users/"):
         os.mkdir("./users/")
@@ -15,8 +12,8 @@ def login():
     #prompt user for credentials
     uname  = input("Enter your username: ")
     #get hashed password from user
-    passw  = getpass.getpass("Password: ").encode('utf-8')
-    passwh = hashlib.sha256(passw).hexdigest()
+    passwh  = hashlib.sha256(getpass.getpass("Password: ").encode('utf-8')).hexdigest()
+    #passwh = hashlib.sha256(passw).hexdigest()
     #check directory for matching user
     chkpth = "./users/" + uname
     #if a matching user exists, compare password hash with stored password hash
@@ -29,6 +26,8 @@ def login():
     print("Authentication Failed.")
     return -1
 
+# Function for registering a new user.  It will prompt them for a new username and then create a user directory structure for the new user.  Only called from
+# inside the login function
 def register():
     #prompt user for a username
     uname = input("Enter a new username: ")
@@ -37,24 +36,50 @@ def register():
         uname = input("Username taken.  Enter a new username: ")
     #create directory for new user
     os.mkdir("./users/" + uname)
+    os.mkdir("./users/" + uname + "/contacts")
     #get password and store hash
     passw = getpass.getpass("Enter a password: ").encode("utf-8")
     passwh = hashlib.sha256(passw).hexdigest()
     f = open("./users/" + uname + "/password", "w")
     f.write(passwh)
-    
-    return
+    return 
 
-def help_func():
+# Simple function to print out the command options
+def help_func(uname):
     print("'add' -> Add a new contact\n'list' -> List all online contacts\n'send' -> Transfer file to contact\n'exit' -> Exit SecureDrop")
     return
 
-def exit_func():
+# Exit function
+def exit_func(uname):
     sys.exit(0)
 
-#test ping function
+# Function to add new contacts.  This is a one way add, and contacts will only appear in the list if the other person has added the user back.
+def add_func(uname):
+    fname = input("Enter Full Name: ")
+    email = input("Enter Email Address: ")
+    fname = fname.replace(' ', '\ ')
+    if not os.path.exists("./users/" + uname + "/" + 'contacts' + '/' + fname):
+        os.mkdir("./users/" + uname + "/" +'contacts' + '/' + fname)
+        f = open("./users/" + uname + "/" + 'contacts'+ '/' + fname +'/'+ 'email.txt', "w")
+        f.write(email)
+        f.close()
+    else:
+        os.remove("./users/" + uname + "/" + 'contacts'+ '/' + fname +'/'+ 'email.txt')
+        f = open("./users/" + uname + "/" + 'contacts'+ '/' + fname +'/'+ 'email.txt', "w")
+        f.write(email)
+        f.close()
+    print('Contact Added.')
+
+# Function to list currently online contacts.
+def list_func(uname):
+    return 0
+
+# Function to send a file to a contact.
+def send_func(uname):
+    return 0
+
+#test ping function - currently unused
 def tping(hostname):
-    #if = open("./tstout.txt")
     response = os.system("ping -c 1 " + hostname)
     if response == 0:
         print("Host up")
