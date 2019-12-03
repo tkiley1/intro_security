@@ -2,7 +2,7 @@
 import hashlib
 import getpass
 import os, sys, time 
-
+from mqtt import *
 
 # Function for logging into the system.  Called first thing when securedrop.py is executed
 def login():
@@ -20,16 +20,19 @@ def login():
     if os.path.exists(chkpth):
         f = open(chkpth + "/password", "r")
         cpasswh = f.read()
+        f.close()
+        f = open(chkpth + '/email', "r")
+        email = f.read()
         if cpasswh == passwh:
             print("Welcome " + uname)
-            return uname
+            return uname, email
     print("Authentication Failed.")
     return -1
 
 # Function for registering a new user.  It will prompt them for a new username and then create a user directory structure for the new user.  Only called from
 # inside the login function
 def register():
-    #prompt user for a username
+    #prompt user for a username and email
     uname = input("Enter a new username: ")
     #make sure the username is unique
     while os.path.exists("./users/" + uname):
@@ -37,11 +40,16 @@ def register():
     #create directory for new user
     os.mkdir("./users/" + uname)
     os.mkdir("./users/" + uname + "/contacts")
+    email = input("Enter your Email: ")
+    f = open("./users/" + uname + "/email", "w")
+    f.write(email)
+    f.close()
     #get password and store hash
-    passw = getpass.getpass("Enter a password: ").encode("utf-8")
-    passwh = hashlib.sha256(passw).hexdigest()
+    passwh = hashlib.sha256(getpass.getpass("Enter a password: ").encode("utf-8")).hexdigest()
+    #passwh = hashlib.sha256(passw).hexdigest()
     f = open("./users/" + uname + "/password", "w")
     f.write(passwh)
+    f.close()
     return 
 
 # Simple function to print out the command options
@@ -71,12 +79,28 @@ def add_func(uname):
     print('Contact Added.')
 
 # Function to list currently online contacts.
-def list_func(uname):
+def list_func(mqttc,email,uname):
+    global open_comms
+    contacts = get_contacts(uname)
+    for i in contacts:
+        open_comms = open_comms + [i]
+        publish(mqttc, i, "Sender<" + email + "> CODE [100]")
+    print("Polling for online contacts")
     return 0
 
 # Function to send a file to a contact.
 def send_func(uname):
     return 0
+
+#Helper function to collect a users contacts
+def get_contacts(uname):
+    contact_list = []
+    for d, n, f in os.walk("./users/" + uname + "/" +'contacts' + '/'):
+        if os.path.exists(d + '/email.txt'):
+            f = open(d + '/email.txt', "r")
+            ctc = f.read()
+            contact_list = contact_list + [ctc]
+    return(contact_list)
 
 #test ping function - currently unused
 def tping(hostname):
