@@ -36,7 +36,7 @@ def message_handler(msg, client):
     code = pl[pl.index('[')+1:pl.index(']')]
     if code == '100':
         message = bytearray("Sender<" + p_uname + "> CODE[101]", "UTF-8")
-        message.extend(b'\0'*150-len(message))
+        message.extend(b'\0'*(150-len(message)))
         client.publish(sender, message)
     if code == '101':
         print(sender + " is online.")
