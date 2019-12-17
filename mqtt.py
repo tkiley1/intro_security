@@ -9,7 +9,11 @@ p_mqttc = None
 p_uname = None
 # Define event callbacks
 def on_connect(client, userdata, flags, rc):
-    return
+    global loop_flag
+    logging.info("Connected flags" + str(flags) + "result code " + str(rc) + "for client.")
+    client.connected_flag = True
+    loop_flag = 0
+    #return
     #print("rc: " + str(rc))
 
 def on_message(client, obj, msg):
