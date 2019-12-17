@@ -15,12 +15,25 @@ def on_connect(client, userdata, flags, rc):
 def on_message(client, obj, msg):
     global p_uname
     global open_comms
+    payload = msg.payload
     #print(msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
+    if len(payload) == 150: # payload is a message instead of a file
+        message_handler(client, payload)
+    else:
+        file_handler(msg)
+
+def file_handler(msg, file_name):
+    f_out = open(file_name)
+    f_out.write(msg)
+
+def message_handler(client, msg):
     pl = str(msg.payload)
     sender = pl[pl.index('<')+1:pl.index('>')]
     code = pl[pl.index('[')+1:pl.index(']')]
     if code == '100':
-        client.publish(sender, "Sender<" + p_uname + "> CODE[101]")
+        message = bytearray("Sender<" + p_uname + "> CODE[101]", "UTF-8")
+        message.extend(b'\0'*150-len(message))
+        client.publish(sender, message)
     if code == '101':
         print(sender + " is online.")
 
@@ -71,6 +84,7 @@ def listen(mqttc):
         #mqttc.publish("0", "Stuff")
         rc = mqttc.loop()
         #print("rc: " + str(rc))
+
 def publish(mqttc, topic, content):
         #print("Publishing topic: " + str(topic) + " Content: " + str(content))
         mqttc.publish(topic, content)
