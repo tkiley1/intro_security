@@ -22,15 +22,15 @@ def on_message(client, obj, msg):
     payload = msg.payload
     #print(msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
     if len(payload) == 150: # payload is a message instead of a file
-        message_handler(client, payload)
+        message_handler(msg, client)
     else:
         file_handler(msg, p_uname)
 
 def file_handler(msg, file_name):
     f_out = open(file_name)
-    f_out.write(msg)
+    f_out.write(msg.payload)
 
-def message_handler(client, msg):
+def message_handler(msg, client):
     pl = str(msg.payload)
     sender = pl[pl.index('<')+1:pl.index('>')]
     code = pl[pl.index('[')+1:pl.index(']')]
