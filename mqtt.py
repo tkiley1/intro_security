@@ -24,7 +24,7 @@ def on_message(client, obj, msg):
     if len(payload) == 150: # payload is a message instead of a file
         message_handler(client, payload)
     else:
-        file_handler(msg)
+        file_handler(msg, p_uname)
 
 def file_handler(msg, file_name):
     f_out = open(file_name)
