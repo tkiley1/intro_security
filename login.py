@@ -84,7 +84,9 @@ def list_func(mqttc,email,uname):
     contacts = get_contacts(uname)
     for i in contacts:
         open_comms = open_comms + [i]
-        publish(mqttc, i, "Sender<" + email + "> CODE [100]")
+        message = bytearray("Sender<" + uname + "> CODE[100]", "UTF-8")
+        message.extend(b'\0'*150-len(message))
+        publish(mqttc, message)
     print("Polling for online contacts")
     return 0
 
