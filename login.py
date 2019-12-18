@@ -91,9 +91,13 @@ def list_func(mqttc,email,uname):
     return 0
 
 # Function to send a file to a contact.
-def send_func(uname):
+def send_func(mqttc,email,uname):
     filename = input("Enter the path of the file: ")
-    f = open(filename, "rw")
+    username = input("Enter email: ")
+    f = open(filename, "rb")
+    buf = f.read()
+    publish(mqttc, username, buf)
+
     
 
 #Helper function to collect a users contacts
