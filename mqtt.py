@@ -38,8 +38,11 @@ def message_handler(msg, client):
         message = bytearray("Sender<" + p_uname + "> CODE[101]", "UTF-8")
         message.extend(b'\0'*(150-len(message)))
         client.publish(sender, message)
-    if code == '101':
+    elif code == '101':
+        print("Got ping response")
         print(sender + " is online.")
+    elif code == '200': pass
+
 
 def on_publish(client, obj, mid):
     #print("mid: " + str(mid))
