@@ -20,6 +20,7 @@ def on_message(client, obj, msg):
     global p_uname
     global open_comms
     payload = msg.payload
+    print("Recieved payload " + payload)
     #print(msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
     if len(payload) == 150: # payload is a message instead of a file
         message_handler(msg, client)
