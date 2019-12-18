@@ -20,7 +20,6 @@ def on_message(client, obj, msg):
     global p_uname
     global open_comms
     payload = msg.payload
-    print("Recieved payload " + payload)
     #print(msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
     if len(payload) == 150: # payload is a message instead of a file
         message_handler(msg, client)
@@ -32,16 +31,18 @@ def file_handler(msg, file_name):
     f_out.write(msg.payload)
 
 def message_handler(msg, client):
+    global p_uname
     pl = str(msg.payload)
     sender = pl[pl.index('<')+1:pl.index('>')]
     code = pl[pl.index('[')+1:pl.index(']')]
     if code == '100':
+        print(sender + " is online.")
         message = bytearray("Sender<" + p_uname + "> CODE[101]", "UTF-8")
         message.extend(b'\0'*(150-len(message)))
         client.publish(sender, message)
-    elif code == '101':
+    if code == '101':
         print(sender + " is online.")
-    elif code == '200': pass # TODO: file metadata header
+    if code == '200': pass # TODO: file metadata header
 
 
 def on_publish(client, obj, mid):
