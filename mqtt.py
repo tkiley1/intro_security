@@ -39,9 +39,8 @@ def message_handler(msg, client):
         message.extend(b'\0'*(150-len(message)))
         client.publish(sender, message)
     elif code == '101':
-        print("Got ping response")
         print(sender + " is online.")
-    elif code == '200': pass
+    elif code == '200': pass # TODO: file metadata header
 
 
 def on_publish(client, obj, mid):
