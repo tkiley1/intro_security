@@ -45,7 +45,7 @@ def message_handler(msg, client):
 
 
 def on_publish(client, obj, mid):
-    #print("mid: " + str(mid))
+    print("mid: " + str(mid))
     return
 
 def on_subscribe(client, obj, mid, granted_qos):
