@@ -15,7 +15,7 @@ while True:
     except KeyboardInterrupt:
         cmd = input("securedrop>")
         if cmd in commands:
-            if cmd == 'list':
+            if cmd == 'list' or cmd == 'send':
                 commands[cmd](mqttc, email, uname)
             elif cmd == 'register':
                 commands[cmd]()
