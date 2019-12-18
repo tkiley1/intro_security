@@ -17,14 +17,14 @@ def on_connect(client, userdata, flags, rc):
     #print("rc: " + str(rc))
 
 def on_message(client, obj, msg):
-    global p_uname
     global open_comms
     payload = msg.payload
     #print(msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
     if len(payload) == 150: # payload is a message instead of a file
         message_handler(msg, client)
     else:
-        file_handler(msg, p_uname)
+        print("Recieving file... (Not implemented)")
+        # file_handler(msg, "test_file.file")
 
 def file_handler(msg, file_name):
     f_out = open(file_name)
@@ -39,10 +39,14 @@ def message_handler(msg, client):
         print(sender + " is online.")
         message = bytearray("Sender<" + p_uname + "> CODE[101]", "UTF-8")
         message.extend(b'\0'*(150-len(message)))
+        print(message)
         client.publish(sender, message)
-    if code == '101':
+    elif code == '101':
         print(sender + " is online.")
-    if code == '200': pass # TODO: file metadata header
+    elif code == '200':
+        pass # TODO: file metadata header
+    else:
+        pass # TODO: Actual file parsing
 
 
 def on_publish(client, obj, mid):
