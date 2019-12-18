@@ -23,8 +23,8 @@ def on_message(client, obj, msg):
     if len(payload) == 150: # payload is a message instead of a file
         message_handler(msg, client)
     else:
-        print("Recieving file... (Not implemented)")
-        # file_handler(msg, "test_file.file")
+        print("Recieving file...")
+        file_handler(msg, "test_file.file")
 
 def file_handler(msg, file_name):
     f_out = open(file_name)
@@ -35,18 +35,17 @@ def message_handler(msg, client):
     pl = str(msg.payload)
     sender = pl[pl.index('<')+1:pl.index('>')]
     code = pl[pl.index('[')+1:pl.index(']')]
+    print(code)
     if code == '100':
         print(sender + " is online.")
         message = bytearray("Sender<" + p_uname + "> CODE[101]", "UTF-8")
         message.extend(b'\0'*(150-len(message)))
-        print(message)
         client.publish(sender, message)
+        print(message)
     elif code == '101':
         print(sender + " is online.")
     elif code == '200':
         pass # TODO: file metadata header
-    else:
-        pass # TODO: Actual file parsing
 
 
 def on_publish(client, obj, mid):

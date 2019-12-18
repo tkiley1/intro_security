@@ -86,13 +86,15 @@ def list_func(mqttc,email,uname):
         open_comms = open_comms + [i]
         message = bytearray("Sender<" + uname + "> CODE[100]", "UTF-8")
         message.extend(b'\0'*(150-len(message)))
-        publish(mqttc,i, message)
+        publish(mqttc, i, message)
     print("Polling for online contacts")
     return 0
 
 # Function to send a file to a contact.
 def send_func(uname):
-    return 0
+    filename = input("Enter the path of the file: ")
+    f = open(filename, "rw")
+    
 
 #Helper function to collect a users contacts
 def get_contacts(uname):
@@ -103,6 +105,7 @@ def get_contacts(uname):
             ctc = f.read()
             contact_list = contact_list + [ctc]
     return(contact_list)
+
 
 #test ping function - currently unused
 def tping(hostname):
