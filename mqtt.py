@@ -28,7 +28,7 @@ def on_message(client, obj, msg):
         print(" Done!")
 
 def file_handler(msg):
-    payload = bytearray(msg.payload)
+    payload = msg.payload
     file_name = payload[0:payload.index('\0\0')]
     f_out = open(file_name, 'wb')
     f_out.write(msg.payload)
@@ -84,8 +84,8 @@ def initialize(uname):
     mqttc.username_pw_set('oxpjhofa', "0DdqvNd75j9n")
     mqttc.connect(url, 16523)
 
-# Start subscribe, with QoS level 0
-    mqttc.subscribe(uname, 0)
+# Start subscribe, with QoS level 1
+    mqttc.subscribe(uname, 1)
 
 # Publish a message
     #mqttc.publish("0", "FOO")
