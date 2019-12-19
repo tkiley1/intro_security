@@ -47,11 +47,8 @@ def message_handler(msg, client):
     pl = str(msg.payload)
     sender = pl[pl.index('<')+1:pl.index('>')]
     code = pl[pl.index('[')+1:pl.index(']')]
-    print(code)
     if code == '100':
-        # print(sender + " is online.")
         message = "Sender<" + p_uname + "> CODE[101]"
-        print(message)
         message += '\0'*(150-len(message))
         message = bytearray(message, 'UTF-8')
         client.publish(sender, message) #"Sender<" + p_uname + "> CODE[101]")
@@ -62,7 +59,6 @@ def message_handler(msg, client):
 
 
 def on_publish(client, obj, mid):
-    print("mid: " + str(mid))
     return
 
 def on_subscribe(client, obj, mid, granted_qos):
