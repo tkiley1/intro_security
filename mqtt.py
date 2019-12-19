@@ -30,9 +30,12 @@ def on_message(client, obj, msg):
 def file_handler(msg):
     payload = msg.payload
     file_name = payload[0:payload.index(b'\0')]
-    file_buff = payload[payload.index(b'\0')+2:]
-    f_out = open(file_name, 'wb')
-    f_out.write(file_buff)
+    if '/' == file_name[0] or '..' in file_name:
+        print("Dangerous pathing detected, rejecting file!")
+    else:
+        file_buff = payload[payload.index(b'\0')+2:]
+        f_out = open(file_name, 'wb')
+        f_out.write(file_buff)
 
 def message_handler(msg, client):
     global p_uname
