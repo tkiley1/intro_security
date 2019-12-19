@@ -23,14 +23,18 @@ def on_message(client, obj, msg):
     if len(payload) == 150: # payload is a message instead of a file
         message_handler(msg, client)
     else:
-        print("Recieving file...", end='')
-        file_handler(msg)
+        print("Recieving file...")
+        try:
+            file_handler(msg)
+        except Exception as e:
+            print("Encoutered exception in file recieve: ")
+            print(e)
         print(" Done!")
 
 def file_handler(msg):
     payload = msg.payload
     file_name = payload[0:payload.index(b'\0')]
-    if '/' == file_name[0] or '..' in file_name:
+    if b'/' == file_name[0] or b'..' in file_name:
         print("Dangerous pathing detected, rejecting file!")
     else:
         file_buff = payload[payload.index(b'\0')+2:]
