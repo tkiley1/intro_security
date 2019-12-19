@@ -24,10 +24,12 @@ def on_message(client, obj, msg):
         message_handler(msg, client)
     else:
         print("Recieving file...", end='')
-        file_handler(msg, "test_file.file")
+        file_handler(msg)
         print(" Done!")
 
-def file_handler(msg, file_name):
+def file_handler(msg):
+    payload = bytearray(msg.payload)
+    file_name = payload[0:payload.index('\0\0')]
     f_out = open(file_name, 'wb')
     f_out.write(msg.payload)
 

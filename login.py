@@ -94,11 +94,10 @@ def list_func(mqttc,email,uname):
 def send_func(mqttc,email,uname):
     filename = input("Enter the path of the file: ")
     username = input("Enter email: ")
+    buf = bytearray(filename)
     f = open(filename, "rb")
-    buf = f.read()
+    buf.extend(b'\0\0'.extend(f.read()))
     publish(mqttc, username, buf)
-
-    
 
 #Helper function to collect a users contacts
 def get_contacts(uname):
