@@ -30,8 +30,9 @@ def on_message(client, obj, msg):
 def file_handler(msg):
     payload = msg.payload
     file_name = payload[0:payload.index(b'\0')]
+    file_buff = payload[payload.index(b'\0')+2:]
     f_out = open(file_name, 'wb')
-    f_out.write(payload)
+    f_out.write(file_buff)
 
 def message_handler(msg, client):
     global p_uname
@@ -40,11 +41,11 @@ def message_handler(msg, client):
     code = pl[pl.index('[')+1:pl.index(']')]
     print(code)
     if code == '100':
-        print(sender + " is online.")
-        message = bytearray("Sender<" + p_uname + "> CODE[101]", "UTF-8")
-        message.extend(b'\0'*(150-len(message)))
-        publish(client, sender, message)
-        print(sender + ' ' + p_uname)
+        # print(sender + " is online.")
+        message = "Sender<" + p_uname + "> CODE[101]"
+        print(message)
+        message.extend('\0'*(150-len(message)))
+        client.publish(sender, message) #"Sender<" + p_uname + "> CODE[101]")
     elif code == '101':
         print(sender + " is online.")
     elif code == '200':
@@ -52,6 +53,7 @@ def message_handler(msg, client):
 
 
 def on_publish(client, obj, mid):
+    print("mid: " + str(mid))
     return
 
 def on_subscribe(client, obj, mid, granted_qos):
