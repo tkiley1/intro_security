@@ -94,11 +94,11 @@ def add_func(uname):
 def list_func(mqttc,email,uname):
     global open_comms
     contacts = get_contacts(uname)
-    for user, email in contacts.items():
-        open_comms = open_comms + [email]
-        message = bytearray("Sender<" + uname + "> CODE[100]", "UTF-8")
+    for user, c_email in contacts.items():
+        open_comms = open_comms + [c_email]
+        message = bytearray("Sender<" + email + "> CODE[100]", "UTF-8")
         message.extend(b'\0'*(150-len(message)))
-        publish(mqttc, email, message)
+        publish(mqttc, c_email, message)
     print("Polling for online contacts")
     return 0
 
