@@ -9,6 +9,7 @@ if (uname) == -1:
 	sys.exit(1)
 mqttc = initialize(email)
 print("press ctl + c to unlock console")
+print("Then type: \"help\" for commands.")
 while True:
     try:
         listen(mqttc)
