@@ -9,6 +9,18 @@ def login():
     if not os.path.exists("./users/"):
         os.mkdir("./users/")
         register()
+
+    while True:
+        is_registered = input("Are you a registered user? [y/n] ")
+        if is_registered == 'y' or is_registered == 'Y':
+            break
+        elif is_registered == 'n' or is_registered == 'N':
+            register()
+            break
+        else:
+            print("Please type a [Y/y] or [N/n]")
+            continue
+
     #prompt user for credentials
     uname  = input("Enter your username: ")
     #get hashed password from user
