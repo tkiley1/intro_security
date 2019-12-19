@@ -9,13 +9,14 @@ if (uname) == -1:
 	sys.exit(1)
 mqttc = initialize(email)
 print("press ctl + c to unlock console")
+print("Then type: \"help\" for commands.")
 while True:
     try:
         listen(mqttc)
     except KeyboardInterrupt:
         cmd = input("securedrop>")
         if cmd in commands:
-            if cmd == 'list':
+            if cmd == 'list' or cmd == 'send':
                 commands[cmd](mqttc, email, uname)
             elif cmd == 'register':
                 commands[cmd]()

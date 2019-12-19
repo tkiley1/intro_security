@@ -9,6 +9,18 @@ def login():
     if not os.path.exists("./users/"):
         os.mkdir("./users/")
         register()
+
+    while True:
+        is_registered = input("Are you a registered user? [y/n] ")
+        if is_registered == 'y' or is_registered == 'Y':
+            break
+        elif is_registered == 'n' or is_registered == 'N':
+            register()
+            break
+        else:
+            print("Please type a [Y/y] or [N/n]")
+            continue
+
     #prompt user for credentials
     uname  = input("Enter your username: ")
     #get hashed password from user
@@ -82,25 +94,34 @@ def add_func(uname):
 def list_func(mqttc,email,uname):
     global open_comms
     contacts = get_contacts(uname)
-    for i in contacts:
-        open_comms = open_comms + [i]
-        publish(mqttc, i, "Sender<" + email + "> CODE [100]")
+    for user, c_email in contacts.items():
+        open_comms = open_comms + [c_email]
+        message = bytearray("Sender<" + email + "> CODE[100]", "UTF-8")
+        message.extend(b'\0'*(150-len(message)))
+        publish(mqttc, c_email, message)
     print("Polling for online contacts")
     return 0
 
 # Function to send a file to a contact.
-def send_func(uname):
-    return 0
+def send_func(mqttc,email,uname):
+    filename = input("Enter the path of the file: ")
+    username = input("Enter email: ")
+    buf = bytearray(filename, "UTF-8")
+    f = open(filename, "rb")
+    buf.extend(b"\0\0" + f.read())
+    publish(mqttc, username, buf)
 
 #Helper function to collect a users contacts
 def get_contacts(uname):
-    contact_list = []
+    contact_list = {}
     for d, n, f in os.walk("./users/" + uname + "/" +'contacts' + '/'):
         if os.path.exists(d + '/email.txt'):
             f = open(d + '/email.txt', "r")
+            ou_name = d.split("/")[-1]
             ctc = f.read()
-            contact_list = contact_list + [ctc]
+            contact_list[ou_name] = ctc
     return(contact_list)
+
 
 #test ping function - currently unused
 def tping(hostname):
