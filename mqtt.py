@@ -20,20 +20,21 @@ def on_message(client, obj, msg):
     global open_comms
     payload = msg.payload
     #print(msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
-    if len(payload) == 150: # payload is a message instead of a file
-        message_handler(msg, client)
-    else:
-        print("Recieving file...")
-        try:
+    try:
+        if len(payload) == 150: # payload is a message instead of a file
+            message_handler(msg, client)
+        else:
+            print("Recieving file...")
             file_handler(msg)
-        except Exception as e:
-            print("Encoutered exception in file recieve: ")
-            print(e)
-        print(" Done!")
+            print(" Done!")
+    except Exception as e:
+        print("Encoutered exception in message: ")
+        print(e)
 
 def file_handler(msg):
     payload = msg.payload
     file_name = payload[0:payload.index(b'\0')]
+    print("File")
     if b'/' == file_name[0] or b'..' in file_name:
         print("Dangerous pathing detected, rejecting file!")
     else:
@@ -51,7 +52,8 @@ def message_handler(msg, client):
         # print(sender + " is online.")
         message = "Sender<" + p_uname + "> CODE[101]"
         print(message)
-        message.extend('\0'*(150-len(message)))
+        message += '\0'*(150-len(message))
+        message = bytearray(message, 'UTF-8')
         client.publish(sender, message) #"Sender<" + p_uname + "> CODE[101]")
     elif code == '101':
         print(sender + " is online.")
